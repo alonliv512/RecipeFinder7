@@ -1,4 +1,23 @@
-﻿<a href="" class="navbar-brand d-flex align-items-center gap-2 fw-bold text-decoration-none">
-    <span class="fs-4">🍳</span>
-    <span>RecipeFinder</span>
+﻿<a href="" class="navbar-brand d-flex align-items-center gap-2 text-decoration-none logo-container">
+    <div class="logo-icon-wrapper d-flex align-items-center justify-content-center shadow-sm">
+        <span class="bi bi-egg-fried text-white fs-5">🍳</span>
+    </div>
+    <div class="d-flex flex-column">
+        <span class="fw-bold fs-5 text-dark brand-title">Recipe<span class="text-success">Finder</span></span>
+        <small class="text-muted brand-subtitle" style="font-size: 0.75rem;">המתכונים שלך במקום אחד</small>
+    </div>
 </a>
+
+<style>
+    .logo-container:hover .brand-title {
+        color: #198754 !important;
+        transition: color 0.2s ease-in-out;
+    }
+
+    .logo-icon-wrapper {
+        width: 38px;
+        height: 38px;
+        background: linear-gradient(135deg, #198754, #20c997);
+        border-radius: 10px;
+    }
+</style>

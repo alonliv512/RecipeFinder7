@@ -61,25 +61,33 @@
     // ** כאן מחליפים את הפונקציה הישנה בחדשה הזו **
     private async Task HandleLogin()
     {
-        errorMessage = ""; // איפוס שגיאות קודמות
+        errorMessage = ""; // שלב 1: מאפס את הודעת השגיאה הישנה (אם הייתה כזו מהניסיון הקודם)
+
         try
         {
             Console.WriteLine("מנסה להתחבר עבור המשתמש: " + username);
 
+            // שלב 2: אריזת שם המשתמש והסיסמה שהמשתמש הקליד לתוך אובייקט (DTO) שנשלח לשרת
             var loginDto = new
             {
                 Username = username,
                 Password = password
             };
 
+            // שלב 3: שליחת בקשת POST לשרת (לנתיב ה-API של ההתחברות) עם הפרטים
             var response = await Http.PostAsJsonAsync("api/users/login", loginDto);
 
             Console.WriteLine("סטטוס התשובה מהשרת: " + response.StatusCode);
+
+            // שלב 4: בדיקה האם השרת החזיר תשובה חיובית (התחברות הצליחה)
             if (response.IsSuccessStatusCode)
             {
                 Console.WriteLine("1. הבקשה הצליחה מול השרת!");
 
+                // הגדרת אפשרויות לקריאת ה-JSON כך שלא תהיה בעיה של אותיות גדולות/קטנות
                 var options = new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+                // קריאת התשובה מהשרת והמרתה למבנה נתונים שמכיל את הודעת ההצלחה ואת פרטי המשתמש
                 var loginResult = await response.Content.ReadFromJsonAsync<LoginResponseDto>(options);
 
                 if (loginResult != null)
@@ -87,15 +95,34 @@
                     Console.WriteLine($"2. התקבלה תשובה מהשרת. Message: '{loginResult.Message}', User object exists: {loginResult.User != null}");
                 }
 
+                // שלב 5: בדיקה שאכן קיבלנו את פרטי המשתמש בחזרה מהשרת
                 if (loginResult != null && loginResult.User != null)
                 {
                     var loggedInUser = loginResult.User;
-                    Console.WriteLine($"3. משתמש נמצא! שם: '{loggedInUser.Username}', מזהה: {loggedInUser.Id}");
+                    Console.WriteLine($"3. משתמש נמצא! שם: '{loggedInUser.Username}', מזהה: {loggedInUser.Id}, תפקיד: {loggedInUser.RoleID}");
 
+                    // שלב 6: שמירת נתוני המשתמש המחובר בזיכרון (UserSession ו-localStorage) כדי שהמערכת תדע מי מחובר
                     await UserSession.Login(loggedInUser);
-                    Console.WriteLine("4. נשמר בהצלחה ב-UserSession וב-localStorage, עובר לדף הבית...");
+                    Console.WriteLine("4. נשמר בהצלחה ב-UserSession וב-localStorage, מבצע ניתוב לפי תפקיד...");
 
-                    Navigation.NavigateTo("/", true);
+                    // שלב 7: ניתוב (הפניה) של המשתמש לדף המתאים לפי מזהה התפקיד שלו (RoleID)
+                    if (loggedInUser.RoleID == 1)
+                    {
+                        // אם זה מנהל (Admin) -> עובר לדף ניהול
+                        Navigation.NavigateTo("/admin-home", forceLoad: true);
+                        return; 
+                    }
+                    else if (loggedInUser.RoleID == 3)
+                    {
+                        // אם זה יוצר תוכן (Content Creator) -> עובר לדף ניהול המתכונים שלו
+                        Navigation.NavigateTo("/creator-home", forceLoad: true);
+                        return;
+                    }
+                    else
+                    {
+                        // כל שאר המשתמשים (משתמש רגיל) -> עוברים לדף הבית הרגיל
+                        Navigation.NavigateTo("/", true);
+                    }
                 }
                 else
                 {
@@ -104,12 +131,14 @@
             }
             else
             {
+                // אם השרת החזיר שגיאה (למשל סיסמה שגויה או משתמש לא קיים)
                 Console.WriteLine($"שגיאה מהשרת סטטוס: {response.StatusCode}");
                 errorMessage = "התחברות נכשלה. בדוק את שם המשתמש או הסיסמה שהזנת.";
             }
         }
         catch (Exception ex)
         {
+            // טיפול במקרה ויש בעיית תקשורת כללית מול השרת (לדוגמה השרת כבוי)
             Console.WriteLine("שגיאה בתקשורת: " + ex.Message);
             errorMessage = $"אירעה שגיאה בחיבור לשרת: {ex.Message}";
         }

@@ -1,0 +1,51 @@
+﻿@page "/creator-home"
+@rendermode InteractiveServer
+@inject UserSession UserSession
+@inject NavigationManager Navigation
+@* אזור יוצר תוכן: הצגת מתכונים אישיים בעזרת רכיב Shared/RecipeCard (שלב 9) *@
+
+<div class="container mt-4">
+    <!-- כותרת ראשית מעוצבת ליוצר תוכן -->
+    <div class="p-4 mb-4 bg-light rounded-3 shadow-sm border-start border-success border-5">
+        <h1 class="text-success fw-bold">המתכונים שלי - אזור יוצר תוכן</h1>
+        <p class="text-muted lead mb-0">כאן תוכל לצפות בכל המתכונים שהעלת עד כה, לערוך אותם או להוסיף חדשים.</p>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="text-secondary">המתכונים שהעלתי</h3>
+        <a href="/add-recipe" class="btn btn-success">+ הוסף מתכון חדש</a>
+    </div>
+
+    <!-- שימוש ברכיב המשותף RecipeCard מתוך תיקיית Shared (דרישת שלב 9) -->
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <RecipeCard Title="עוגת גבינה פירורים" Category="קינוחים" Description="עוגת גבינה עשירה וקלה להכנה עם שכבת פירורים פריכה." />
+        </div>
+        <div class="col-md-4 mb-3">
+            <RecipeCard Title="סלט יווני מרענן" Category="סלטים" Description="סלט עשיר בירקות טריים, גבינת פטה זיתי קלמטה ושמן זית." />
+        </div>
+        <div class="col-md-4 mb-3">
+            <RecipeCard Title="מרק כתום מחמם" Category="מרקים" Description="מרק עשיר בבטטה, דלעת וגזר עם קרם קוקוס מפנק." />
+        </div>
+    </div>
+</div>
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        // נותן שבריר שנייה ל-UserSession לטעון את הנתונים מה-localStorage
+        await Task.Delay(150);
+
+        var currentUser = await UserSession.GetCurrentUser();
+
+        // בדיקה האם המשתמש מחובר והאם הוא יוצר תוכן (RoleID == 3)
+        if (currentUser == null)
+        {
+            Navigation.NavigateTo("/login");
+        }
+        else if (currentUser.RoleID == 2)
+        {
+            // אם הוא מחובר אבל אין לו הרשאת מנהל - נשלח אותו לדף "אין הרשאה"
+            Navigation.NavigateTo("/access-denied");
+        }
+    }
+}

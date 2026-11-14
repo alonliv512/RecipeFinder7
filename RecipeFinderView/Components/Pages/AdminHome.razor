@@ -1,0 +1,125 @@
+﻿@page "/admin-home"
+@rendermode InteractiveServer
+@inject UserSession UserSession
+@inject NavigationManager Navigation
+
+@* דף ניהול ראשי למנהל המערכת: עיצוב סטטי, טבלת משתמשים ושימוש ברכיב Shared (שלב 9) *@
+
+<div class="container mt-4">
+    <!-- כותרת ראשית מעוצבת -->
+    <div class="p-4 mb-4 bg-light rounded-3 shadow-sm border-start border-danger border-5">
+        <h1 class="text-danger fw-bold">ברוך הבא, מנהל המערכת!</h1>
+        <p class="text-muted lead mb-0">כאן תוכל לצפות בתמונת המצב של האתר ולנהל את כל משתמשי והרשאות המערכת.</p>
+    </div>
+
+    <!-- תמונת מצב של האתר - כרטיסיות נתונים סטטיות לדוגמה -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="card text-white bg-danger shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">משתמשים רשומים</h5>
+                    <p class="card-text display-6 fw-bold">3</p>
+                    <small>מתעדכן מהמערכת</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card text-white bg-success shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">סה"כ מתכונים</h5>
+                    <p class="card-text display-6 fw-bold">58</p>
+                    <small>בכל הקטגוריות</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card text-white bg-dark shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">יוצרי תוכן פעילים</h5>
+                    <p class="card-text display-6 fw-bold">1</p>
+                    <small>מנהלים מתכונים</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- אזור טבלת ניהול משתמשים -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="text-secondary">ניהול משתמשי המערכת</h3>
+        <a href="/add-recipe" class="btn btn-outline-danger btn-sm">+ הוסף מתכון כמנהל</a>
+    </div>
+
+    <div class="card shadow-sm p-3 mb-4">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-danger">
+                <tr>
+                    <th>מזהה (ID)</th>
+                    <th>שם משתמש</th>
+                    <th>אימייל</th>
+                    <th>תפקיד (Role)</th>
+                    <th>פעולות ניהול</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Alon Admin</td>
+                    <td>alon@admin.com</td>
+                    <td><span class="badge bg-danger">מנהל מערכת</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1">ערוך</button>
+                        <button class="btn btn-sm btn-outline-secondary">חסום</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Chef Sarah</td>
+                    <td>sarah@creator.com</td>
+                    <td><span class="badge bg-warning text-dark">יוצר תוכן</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1">ערוך</button>
+                        <button class="btn btn-sm btn-outline-secondary">חסום</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Dani User</td>
+                    <td>dani@gmail.com</td>
+                    <td><span class="badge bg-secondary">משתמש רגיל</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1">ערוך</button>
+                        <button class="btn btn-sm btn-outline-secondary">חסום</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- דוגמה לשימוש ברכיב ה-Shared (RecipeCard) גם בדף המנהל -->
+    <h3 class="text-secondary mb-3">מתכונים לדוגמה בפיקוח המערכת (רכיב Shared)</h3>
+    <div class="row mb-5">
+        <div class="col-md-4 mb-3">
+            <RecipeCard Title="עוגת שוקולד מנהל" Category="קינוחים" Description="מתכון לדוגמה המפוקח תחת בקרת המערכת." />
+        </div>
+    </div>
+</div>
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        // לטעון את הנתונים מ-localStorage - נותן שבריר שנייה ל-UserSession
+        await Task.Delay(150);
+
+        var currentUser = await UserSession.GetCurrentUser();
+
+        if (currentUser == null)
+        {
+            // אם המשתמש בכלל לא מחובר - שלח אותו להתחברות
+            Navigation.NavigateTo("/login");
+        }
+        else if (currentUser.RoleID != 1)
+        {
+            // אם הוא מחובר אבל אין לו הרשאת מנהל (למשל RoleID == 2) - שלח לדף "אין הרשאה"
+            Navigation.NavigateTo("/access-denied");
+        }
+    }
+}

@@ -1,0 +1,20 @@
+﻿@* רכיב משותף: כרטיס מתכון להצגה אחידה בכל הדפים *@
+<div class="card shadow-sm h-100 mb-3" style="width: 18rem;">
+    <div class="card-body">
+        <h5 class="card-title text-success">@Title</h5>
+        <h6 class="card-subtitle mb-2 text-muted">קטגוריה: @Category</h6>
+        <p class="card-text">@Description</p>
+        <button class="btn btn-outline-primary btn-sm">צפה במתכון</button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Title { get; set; } = "שם המתכון";
+
+    [Parameter]
+    public string Category { get; set; } = "כללי";
+
+    [Parameter]
+    public string Description { get; set; } = "תיאור קצר של המתכון ומרכיביו העיקריים...";
+}

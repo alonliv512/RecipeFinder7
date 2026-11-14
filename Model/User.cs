@@ -4,6 +4,7 @@
     {
         public string Username { get; set; }
         public string PasswordHash { get; set; } = string.Empty;
+        [System.Text.Json.Serialization.JsonPropertyName("roleId")]
         public int RoleID { get; set; }
         public string RoleName { get; set; }
         public bool IsActive { get; set; }

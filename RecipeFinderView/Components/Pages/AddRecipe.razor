@@ -1,0 +1,46 @@
+﻿@page "/add-recipe"
+@rendermode InteractiveServer
+
+@* דף הוספת מתכון: שלב עיצובי בלבד (ללא לוגיקה וללא חיבור לבסיס נתונים) *@
+
+<div class="container mt-4">
+    <h2 class="text-success mb-3">הוספת מתכון חדש למערכת</h2>
+    <p class="text-muted">מלא את הפרטים הבאים כדי לשתף את המתכון הטעים שלך עם כולם (עיצוב בלבד).</p>
+
+    <div class="card p-4 shadow-sm" style="max-width: 600px;">
+        <div class="mb-3">
+            <label class="form-label">שם המתכון</label>
+            <input type="text" class="form-control" placeholder="לדוגמה: עוגת שוקולד חמה" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">קטגוריה</label>
+            <select class="form-select">
+                <option>קינוחים</option>
+                <option>ארוחת ערב</option>
+                <option>מנות עיקריות</option>
+                <option>סלטים</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">רכיבים ומצרכים</label>
+            <textarea class="form-control" rows="3" placeholder="רשום את המצרכים, כל אחד בשורה חדשה..."></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">אופן הכנה</label>
+            <textarea class="form-control" rows="4" placeholder="תאר את שלבי ההכנה בקצרה..."></textarea>
+        </div>
+
+        <button type="button" class="btn btn-success w-100" @onclick="HandleSubmit">שמור מתכון</button>
+    </div>
+</div>
+
+@code {
+    // פונקציית דמה כפתור לכפתור בשלב העיצובי בלבד
+    private void HandleSubmit()
+    {
+        // בשלב זה אין לוגיקה או שמירה ל-DB
+    }
+}

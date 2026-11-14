@@ -2,23 +2,38 @@
 @implements IDisposable
 @inject UserSession UserSession
 @inject NavigationManager Navigation
-
+@using RecipeFinderView.Components.Shared
 <div class="top-bar px-4 py-2 bg-light border-bottom d-flex justify-content-between align-items-center">
+    
+    <!-- 1. אזור הלוגו משמאל/מימין -->
     <div class="brand-area">
-        <h4 class="m-0">RecipeFinder</h4>
+        <Logo />
     </div>
-
+    <!-- הבר העליון של האתר -->
+ 
     <div class="nav-links d-flex align-items-center gap-3">
+        <!-- קישורים פתוחים לכולם -->
         <a href="" class="text-decoration-none">דף הבית</a>
+        <a href="recipe-search" class="text-decoration-none">חיפוש לפי רכיבים</a>
+        <a href="add-recipe" class="text-decoration-none">הוספת מתכון</a>
 
         @if (UserSession.IsLoggedIn)
         {
-            <span class="fw-bold text-success">שלום, @UserSession.Username</span>
+            <!-- קישורים למשתמש מחובר / יוצר תוכן -->
+            <a href="creator-home" class="text-decoration-none text-success fw-bold">המתכונים שלי</a>
+
+            @* אם המשתמש הוא אדמין *@
+            @if (UserSession.RoleName == "Admin")
+            {
+                <a href="admin-home" class="text-decoration-none text-danger fw-bold">ניהול מערכת</a>
+            }
+
+            <span class="fw-bold text-success ms-2">שלום, @UserSession.Username</span>
             <button class="btn btn-outline-danger btn-sm" @onclick="HandleLogout">התנתק</button>
         }
         else
         {
-            <a href="login" class="text-decoration-none">התחבר</a>
+            <a href="login" class="text-decoration-none">התחברות</a>
             <a href="register" class="text-decoration-none">הרשמה</a>
         }
     </div>
@@ -27,7 +42,7 @@
 <div class="content px-4 py-3">
     @Body
 </div>
-
+<FoodFooter />
 @code {
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

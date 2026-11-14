@@ -58,3 +58,22 @@ h1:focus {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
+/* עיצוב פס התחתית הגלובלי (Footer) המשלב סטיקרים ואלמנטים של אוכל */
+.food-footer-banner {
+    background: linear-gradient(to top, #f4f9f5 0%, #ffffff 100%);
+    border-color: #e2e8f0 !important;
+    margin-top: auto;
+}
+
+.food-icons-row {
+    font-size: 1.8rem;
+}
+
+.food-sticker {
+    transition: transform 0.2s ease;
+    cursor: default;
+}
+
+    .food-sticker:hover {
+        transform: scale(1.2);
+    }
